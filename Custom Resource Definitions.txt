@@ -1,0 +1,3 @@
+I. Custom resource files alllow you to define your own object kinds and lets the API server handle entire lifecycle.
+
+II. A resource is an endpoint that stores a collection of API objects.
