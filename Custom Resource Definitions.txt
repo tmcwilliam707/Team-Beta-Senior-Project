@@ -1,3 +1,18 @@
-I. Custom resource files alllow you to define your own object kinds and lets the API server handle entire lifecycle.
+I.    Custom resource files alllow you to define your own object kinds and lets the API server handle entire lifecycle.
 
-II. A resource is an endpoint that stores a collection of API objects.
+II.   A resource is an endpoint that stores a collection of API objects.
+
+III.  A custom resource is an object that extends the kubernetes API or allows you to introduce your own API into project cluster.
+
+IV.   When introduced, a CRD file in cluster cause kubernetes API server to begin serving the specified custom resource.
+
+
+V.    API server creates new RESTful path.
+
+VI.   Cluster role aggregation is used to grant access to user with admin, edit or view default cluster roles.
+
+VII.  Cluster role aggregation allows insertion of custom policy roles into cluster roles.
+
+VIII. This behavior intergrates new resource into cluster's RBAC ploicy as if it were a built in resource.
+
+
