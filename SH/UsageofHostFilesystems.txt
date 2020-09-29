@@ -1,0 +1,11 @@
+Host File is a file to manage a table of computer names and IP addresses.
+The host file performs a name to IP address mapping.
+A host file is used when you enter a network name into an internet browser.
+Host files are not used often in modern websites, however it is useful for network testing
+and web development. You can use these to prepare to be using a website url without it being
+live.
+
+
+Sources:
+https://www.youtube.com/watch?v=a4S6FU5RdR0
+https://www.youtube.com/watch?v=KN8YgJnShPM
