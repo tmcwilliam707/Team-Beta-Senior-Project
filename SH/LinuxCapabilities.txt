@@ -1,0 +1,11 @@
+Linux capabilities provide a finer grained breakdown of the privileges traditionally associated with the superuser such as a privileged container. 
+Can be used to escalate privileges and may be restricted to the PodSecurtiyPolicy. Priviledged containers allow most of these capabilites.
+
+List of Capability Fields:
+AllowedCapabilites- Provides list of capabilities that are allowed to be added to a container.
+RequiredCapabilities- Capabilites that must be dropped for a container (Must no be included in AllowedCapabilites or DefaultAddCapabilites).
+DefaultAddCapabilities- Capabilites added to a container by default. 
+Default list can be found here: https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities
+
+All Linux Capabilities:
+https://man7.org/linux/man-pages/man7/capabilities.7.html
