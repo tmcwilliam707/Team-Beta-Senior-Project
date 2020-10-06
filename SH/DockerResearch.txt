@@ -1,0 +1,6 @@
+Docker is a contanerizer platform, that allows the users to
+make containers that will be shipped to other platforms.
+Containers are similar to virtual machines, but use the 
+existing Operating system that the container is on rather than
+creating a new OS.
+This allows containers to run the same on all platforms.

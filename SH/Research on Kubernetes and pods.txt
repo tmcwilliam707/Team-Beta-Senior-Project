@@ -1,0 +1,14 @@
+Kubernetes uses pods, a form of container.
+Kubernetes allows you to have desired state management, allowing you
+to run a specific configuration. 
+The Kubernetes API sits in front of the Kubernetes cluster service.
+In Kubernetes have workers attached to containers that attaches to 
+the Kubernetes cluster service.
+The pod configuration is managed by the .yaml file, that describes
+what goes into a pod, container and the desired state.
+There are pods, and also replicas of pods. 
+
+
+sources:
+https://www.youtube.com/watch?v=inJ7YJ-jt8I
+https://www.youtube.com/watch?v=PH-2FfFD2PU

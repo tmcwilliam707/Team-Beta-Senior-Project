@@ -1,0 +1,11 @@
+I.    Admission controllers are pieces of code that. intercepts request to Kubernetes API server prior to persitence of the object, 
+      but after request is authenticated and authorized.
+
+
+II.   Controllers are compiled into Kube API server binary, may only be configured by the cluster adminstartor.
+
+
+III.  Special Controllers: mutating Admission Webhook and Validating Admission WebHook.
+
+
+IV.   AC can be validating, mutating or both. Mutating can do both, but does not support read request.

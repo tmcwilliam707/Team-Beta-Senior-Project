@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Namespaces are a way to divide cluster resources between multiple users (via resource quota).
 
 In future versions of Kubernetes, objects in the same namespace will have the same access control policies by default.
@@ -7,3 +8,53 @@ Namespaces cannot be nested inside one another and each Kubernetes resource can 
 
 When you create a Service, it creates a corresponding DNS entry. This entry is of the form <service-name>.<namespace-name>.svc.cluster.local, which means that if a container just uses <service-name>, it will resolve to the service which is local to a namespace. 
 This is useful for using the same configuration across multiple namespaces such as Development, Staging and Production. If you want to reach across namespaces, you need to use the fully qualified domain name (FQDN).
+=======
+Kubernetes supports multiple virtual clusters backed by the same physical cluster. These virtual clusters are called namespaces.
+
+Namespaces are a way to divide cluster resources between multiple users (via resource quota).
+
+In future versions of Kubernetes, objects in the same namespace will have the same access control policies by default.
+
+Namespaces provide a scope for names. Names of resources need to be unique within a namespace, but not across namespaces. 
+Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
+
+When you create a Service, it creates a corresponding DNS entry. This entry is of the form <service-name>.<namespace-name>.svc.cluster.local, which means that if a container just uses <service-name>, 
+it will resolve to the service which is local to a namespace. 
+This is useful for using the same configuration across multiple namespaces such as Development, Staging and Production. 
+If you want to reach across namespaces, you need to use the fully qualified domain name (FQDN).
+
+You can list the current namespaces in a cluster using:{
+kubectl get namespace
+}
+Output:{
+NAME              STATUS   AGE
+default           Active   1d
+kube-node-lease   Active   1d
+kube-public       Active   1d
+kube-system       Active   1d
+}
+
+default The default namespace for objects with no other namespace
+-kube-system The namespace for objects created by the Kubernetes system
+-kube-public This namespace is created automatically and is readable by all users (including those not authenticated). This namespace is mostly reserved for cluster usage, 
+in case that some resources should be visible and readable publicly throughout the whole cluster. The public aspect of this namespace is only a convention, not a requirement.
+-kube-node-lease This namespace for the lease objects associated with each node which improves the performance of the node heartbeats as the cluster scales.
+
+Namespaces and DNS
+When you create a Service, it creates a corresponding DNS entry. This entry is of the form <service-name>.<namespace-name>.svc.cluster.local, which means that if a container just uses <service-name>, it will resolve to the service which is local to a namespace. 
+This is useful for using the same configuration across multiple namespaces such as Development, Staging and Production. If you want to reach across namespaces, you need to use the fully qualified domain name (FQDN).
+
+Setting the namespace for a request
+To set the namespace for a current request, use the --namespace flag.
+
+For example:
+
+kubectl run nginx --image=nginx --namespace=<insert-namespace-name-here>
+kubectl get pods --namespace=<insert-namespace-name-here>
+Setting the namespace preference
+You can permanently save the namespace for all subsequent kubectl commands in that context.
+
+kubectl config set-context --current --namespace=<insert-namespace-name-here>
+# Validate it
+kubectl config view --minify | grep namespace: 
+>>>>>>> ff8261fecab5e5687c501830013f1e8a3f9ef8ce
