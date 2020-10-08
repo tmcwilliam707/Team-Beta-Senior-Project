@@ -1,0 +1,10 @@
+SELinux: Security-Enhanced Linux (SELinux) is a Linux kernel security module that provides a mechanism for supporting access control security policies, including mandatory access controls (MAC). 
+Containers support running on hosts with SELinux enabled.
+
+SELinux for containers: 
+SELinux uses policies to for containers. Docker CE require these polocies so that the processes and files created by Docker are able to run with limited system access.
+The SELinux policy also prevents mounting protected files into containers by default.
+
+Kubernetes uses SELinux to run commands for Users and groups.
+MustRunAs - Requires seLinuxOptions to be configured. Uses seLinuxOptions as the default. Validates against seLinuxOptions.
+RunAsAny - No default provided. Allows any seLinuxOptions to be specified.

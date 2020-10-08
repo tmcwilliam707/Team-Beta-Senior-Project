@@ -1,0 +1,10 @@
+These options control the allowPrivilegeEscalation container option. This bool directly controls whether the no_new_privs flag gets set on the container process. 
+This flag will prevent setuid binaries from changing the effective user ID, and prevent files from enabling extra capabilities (e.g. it will prevent the use of the ping tool). 
+This behavior is required to effectively enforce MustRunAsNonRoot.
+
+AllowPrivilegeEscalation - Gates whether or not a user is allowed to set the security context of a container to allowPrivilegeEscalation=true. 
+This defaults to allowed so as to not break setuid binaries. 
+Setting it to false ensures that no child process of a container can gain more privileges than its parent.
+
+DefaultAllowPrivilegeEscalation - Sets the default for the allowPrivilegeEscalation option. The default behavior without this is to allow privilege escalation so as to not break setuid binaries. 
+If that behavior is not desired, this field can be used to default to disallow, while still permitting pods to request allowPrivilegeEscalation explicitly
