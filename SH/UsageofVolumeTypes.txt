@@ -1,0 +1,35 @@
+Usage of Volume Types
+
+volumes types are associated with Docker
+Docker volumes are a folder that contain data from the container
+There are 3 docker volume types
+
+-Host
+-Named 
+-Anonymous
+
+Volumes - Provides a list of allowed volume types. The allowable values correspond to the 
+volume sources that are defined when creating a volume. For the complete list of volume types, 
+see Types of Volumes. Additionally, * may be used to allow all volume types.
+
+The recommended minimum set of allowed volumes for new PSPs are:
+
+configMap
+downwardAPI
+emptyDir
+persistentVolumeClaim
+secret
+projected
+
+FSGroup - Controls the supplemental group applied to some volumes.
+
+MustRunAs - Requires at least one range to be specified. Uses the minimum value of the first 
+range as the default. Validates against all ranges.
+MayRunAs - Requires at least one range to be specified. Allows FSGroups to be left unset 
+without providing a default. Validates against all ranges if FSGroups is set.
+RunAsAny - No default provided. Allows any fsGroup ID to be specified.
+
+sources:
+https://www.youtube.com/watch?v=p2PH_YPCsis
+
+https://kubernetes.io/docs/concepts/policy/pod-security-policy/#volumes-and-file-systems
