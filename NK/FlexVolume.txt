@@ -1,0 +1,14 @@
+FlexVolume is an out-of-tree plugin interface that has existed in Kubernetes since version 1.2 (before CSI). It uses an exec-based model to interface with drivers. 
+FlexVolume driver binaries must be installed in a pre-defined volume plugin path on each node (and in some cases master).
+
+Pods interact with FlexVolume drivers through the flexvolume in-tree plugin.
+
+Flexvolume enables users to write their own drivers and add support for their volumes in Kubernetes. 
+Vendor drivers should be installed in the volume plugin path on every node, and on master if the driver requires attach capability 
+(unless --enable-controller-attach-detach Kubelet option is set to false, but this is highly discouraged because it is a legacy mode of operation).
+
+Flexvolume is a GA feature from Kubernetes 1.8 release onwards.
+
+A great recorse.
+
+https://github.com/kubernetes/community/blob/master/contributors/devel/sig-storage/flexvolume.md
