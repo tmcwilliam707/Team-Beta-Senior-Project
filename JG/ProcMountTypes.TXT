@@ -1,0 +1,32 @@
+Definition of /proc in linux:
+-The /proc directory contains virtual files that are windows into the current state of the running Linux kernel. This allows the 
+user to peer into a vast array of information, effectively providing them with the kernel's point-of-view within the system. In addition,
+the user can use the /proc directory to communicate particular configuration changes to the kernel.
+
+Mounting in Linux:
+On all Unix systems, every file and every directory is part of one big file tree. To access a file, you need to know the full path 
+starting from the root directory. When adding a file system to your computer, you need to make it available somewhere in the file tree. 
+The directory where you make a file system available is called a mount point.
+
+ProcMounting is essentially mounting the /proc directory for easy access to display information in the eyes of the Linux Kernal.
+
+
+ProcMountingTypes in Kubernetes:
+allowedProcMountTypes is a list of allowed ProcMountTypes. Empty or nil indicates that only the DefaultProcMountType may be used.
+
+DefaultProcMount: uses the container runtime defaults for read-only and masked paths for /proc. Most container runtimes mask certain 
+paths in /proc to avoid accidental security exposure of special devices or information. This is denoted as the string Default.
+
+The only other ProcMountType is UnmaskedProcMount, which bypasses the default masking behavior of the container runtime and ensures 
+the newly created /proc the container stays intact with no modifications. (String Unmasked)
+
+
+Why use ProcMounting?:
+-To run unprivileged containers using user namespaces nested inside CRI containers, we need an option to have a ProcMount. That is, 
+we need an option to designate explicitly turn off masking and setting read-only of paths so that we can mount /proc in the nested 
+container as an unprivileged user.
+
+
+Sources:
+https://kubernetes.io/docs/concepts/policy/pod-security-policy/#allowedprocmounttypes
+https://stupefied-goodall-e282f7.netlify.app/contributors/design-proposals/auth/proc-mount-type/
