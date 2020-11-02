@@ -1,0 +1,30 @@
+add_network_policy.yaml
+
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-networkpolicy
+spec:
+  rules:
+  - name: default-deny-ingress
+    match:
+      resources: 
+        kinds:
+        - Namespace
+        name: "*"
+    exclude:
+      namespaces:
+        - "kube-system"
+        - "default"
+        - "kube-public"
+        - "kyverno"
+    generate: 
+      kind: NetworkPolicy
+      name: default-deny-ingress
+      namespace: "{{request.object.metadata.name}}"
+      data:
+        spec:
+          # select all pods in the namespace
+          podSelector: {}
+          policyTypes: 
+          - Ingress
