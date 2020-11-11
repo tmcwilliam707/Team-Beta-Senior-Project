@@ -1,0 +1,27 @@
+Generate Configurations
+The final type of policy rule generates new configurations, when a new Kubernetes namespace is created in the cluster. This is useful to set defaults for the namespace, such as a default Kubernetes NetworkPolicy that is generated for all namespaces by the policy below:
+
+apiVersion: kyverno.io/v1alpha1
+kind: Policy
+metadata:
+  name: "default"
+spec:
+  rules:
+  - name: "deny-all-traffic"
+    resource: 
+      kinds:
+       - Namespace
+      name: "*"
+    generate: 
+      kind: NetworkPolicy
+      name: deny-all-traffic
+      data:
+        spec:
+        podSelector:
+          matchLabels: {}
+          matchExpressions: []
+        policyTypes: []
+        metadata:
+          annotations: {}
+          labels:
+            policyname: "default"

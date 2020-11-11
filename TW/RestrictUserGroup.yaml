@@ -1,0 +1,41 @@
+policy_validate_user_group_fsgroup_id.yaml
+
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: validate-userid-groupid-fsgroup
+spec:
+  rules:
+  - name: validate-userid
+    match:
+      resources:
+        kinds:
+        - Pod
+    validate:
+      message: "User ID should be 1000"
+      pattern:
+        spec:
+          securityContext:
+            runAsUser: '1000'
+  - name: validate-groupid
+    match:
+      resources:
+        kinds:
+        - Pod
+    validate:
+      message: "Group ID should be 3000"
+      pattern:
+        spec:
+          securityContext:
+            runAsGroup: '3000'
+  - name: validate-fsgroup
+    match:
+      resources:
+        kinds:
+        - Pod
+    validate:
+      message: "fsgroup should be 2000"
+      pattern:
+        spec:
+          securityContext:
+            fsGroup: '2000'
