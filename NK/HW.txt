@@ -1,0 +1,38 @@
+package main
+
+import "fmt"
+
+
+
+
+func main() {
+	var vals [100]int
+	fmt.Println("for")
+	for i := 0; i < 100; i++ {
+		fmt.Println(i)
+		fmt.Println("Enter A number: ") 
+		var input int
+		fmt.Scanf("%f\n", &input)
+		if input == 0 {
+			fmt.Println("break")
+			break;
+		}
+		vals[i] = input
+	}
+	fmt.Println("for post")
+	var min = vals[0]
+	var index = 0
+	for d := 0; d < 100; d++ {
+		if vals[d] < min {
+			min := vals[d]
+			index := d
+			fmt.Println(min)
+		}
+	}
+	fmt.Println(vals)
+	fmt.Println("The lowest value is:")
+	fmt.Println(min)
+	fmt.Println("The lowest index is:")
+	fmt.Println(index)
+
+}

@@ -1,0 +1,17 @@
+Diamanti - 
+
+QA Automation - they use CLI, API, GUI to create a good inviroment to allow the customer to test and create diffrent things.
+
+Mainly they went over test cases and how all that stuff works. They also went over set up and how to deploy the product with a walk threw that was very indepth.
+
+File structor - they went over how there systems files are structured and work together. They use a VM in the US to code and this is there main working eviroment.
+
+They are creating a VC fraimwork that has to do with error testing. They use DCXZ Automation and Spektra Automation to achieve this.
+It is mostly used for propducts in go laungage.They also Use qaserv2 machine to clone the code from while setting up the eviroment.
+They also went over how to create alot of diffrent stuff inside of there system and got a coding interview.
+
+There was alot of stuff going on in this video so i need to review it again.
+
+
+
+
