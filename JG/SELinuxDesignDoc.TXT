@@ -1,0 +1,21 @@
+SELinux Yaml Examples:
+
+Setting rule to MustRunAs:
+...
+seLinux:
+    rule: MustRunAs
+
+
+Setting a specific Level:
+...
+securityContext:
+  seLinuxOptions:
+    level: "s0:c123,c456"
+
+
+Setting Rule to RunAsAny:
+
+...
+seLinux:
+    rule: RunAsAny
+
