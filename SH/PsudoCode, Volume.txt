@@ -1,9 +1,15 @@
 func volumeTypes(num){
-	minVols int = num                                               //get input on how many minimum volumes     
-	arrayofallvolumes = ["                                          //lists of all possible volumes
+	minVols int = getinput(“How many volumes”)                                              
+//get input on how many minimum volumes     
+	arrayofallvolumes = ["                                          
+//lists of all possible volumes
 			
 			     "]	
-	choices = getinput("from array of all volumes, choose volumes") //get inputs, either by text or by
-									//list on volume choises
-	fsgroupctrl()                                                   //call to set fs group controls
+	choices = getinput("from array of all volumes, choose volumes") 
+//get inputs, either by text or by
+//list on volume choices
+	writetofile(choices, minVols)
+	fsgroupctrl()                                                   
+//call to set fs group controls
 }
+
