@@ -1,0 +1,16 @@
+These options control the allowPrivilegeEscalation container option. 
+- (This bool directly controls whether the no_new_privs flag gets set on the container process.)
+- This flag will prevent setuid binaries from changing the effective user ID, and prevent files 
+  from enabling extra capabilities (e.g. it will prevent the use of the ping tool). This behavior is 
+  required to effectively enforce MustRunAsNonRoot.
+  
+  allowPrivilegeEscalation=true
+  - true --> will not break setuid binaries, child processes can gain more privilege than parents.
+  - false --> will likely break setuid binaries, child processes can not gain more privilege than parents.
+  
+  defaultAllowPrivilegeEscalation (for default behavior if allowPrivilegeEscalation is not specified)
+  - =true (by default) as to not break setuid binaries
+  - =false
+  - =disallow --> permits pods to request allowPrivilegeEscalation explicitly.
+
+https://kubernetes.io/docs/concepts/policy/pod-security-policy/#privilege-escalation

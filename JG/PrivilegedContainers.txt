@@ -2,3 +2,4 @@ Privileged containers: determines if any container in a pod can enable privilege
 By default a container is not allowed to access any devices on the host, but a "privileged" container is given access to all devices on the host. 
 This allows the container nearly all the same access as processes running on the host. 
 This is useful for containers that want to use linux capabilities like manipulating the network stack and accessing devices
+When a container is privileged, privilege escalation is automatically enabled for that container.

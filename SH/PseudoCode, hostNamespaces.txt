@@ -1,0 +1,19 @@
+func getHostNamespace (hostPathVol, restrictions)
+	/*
+	  # This allows "/foo", "/foo/", "/foo/bar" etc., but
+  	  # disallows "/fool", "/etc/foo" etc.
+  	  # "/foo/../" is never valid.
+  	  - pathPrefix: "/foo"
+	*/
+	string pathPrefix = ""                              //either input or chosen in program
+	if pathPrefix is empty
+		restrictions = none
+		return restrictions
+	else
+		hostPathVol: pathPrefix
+		readOnly: True                            //either input or chosen in program
+		if readOnly 
+			hostPathVol.readOnly = True
+		else
+			hostPathVol.readOnly = False
+}

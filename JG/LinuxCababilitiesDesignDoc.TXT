@@ -1,0 +1,41 @@
+Linux Capabilities 
+ 
+Yaml File example of implementing AllowedCapabilites and RequiredDropCapabilites:
+ 
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: privileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+spec:
+  privileged: true
+  allowPrivilegeEscalation: true
+  allowedCapabilities:
+  - '*'  #this can be used to allow all capabilities
+  RequiredDropCapabilities:
+  - ALL  #Drops all Default
+ 
+ 
+Yaml file example of adding specific capabilities:
+...
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add: ["NET_ADMIN", "SYS_TIME"]
+ 
+ 
+Yaml File Example of dropping specific capabilities:
+spec:
+  containers:
+  - image: mateobur/flask
+    name: flask-cap
+    securityContext:
+      capabilities:
+        drop:
+          - NET_RAW
+          - CHOWN
+All Linux capabilities included in this list: https://man7.org/linux/man-pages/man7/capabilities.7.html
