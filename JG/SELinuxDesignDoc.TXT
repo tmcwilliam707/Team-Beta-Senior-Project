@@ -1,21 +1,20 @@
-SELinux Yaml Examples:
-
+SELinux Yaml Design Examples:
 Setting rule to MustRunAs:
 ...
-seLinux:
-    rule: MustRunAs
+seLinuxContext:
+  type: MustRunAs 
 
 
-Setting a specific Level:
+SeLinuxOptions Configuration Setting Label:
+
 ...
 securityContext:
   seLinuxOptions:
     level: "s0:c123,c456"
 
-
 Setting Rule to RunAsAny:
 
 ...
-seLinux:
-    rule: RunAsAny
-
+seLinuxContext:
+	type: RunAsAny
+ 

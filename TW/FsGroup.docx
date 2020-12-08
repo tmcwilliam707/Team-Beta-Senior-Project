@@ -1,0 +1,204 @@
+fsGroup is used for controlling access to block storage, such as Ceph RBD and iSCSI.
+fsGroup defines a pod’s "file system group" ID, which is added to the container’s supplemental groups. The supplementalGroups ID applies to shared storage, whereas the fsGroup ID is used for block storage.
+
+Block storage, such as Ceph RBD, iSCSI, and various cloud storage, is typically dedicated to a single pod which has requested the block storage volume, either directly or using a PVC. Unlike shared storage, block storage is taken over by a pod, meaning that user and group IDs supplied in the pod definition (or image) are applied to the actual, physical block device. Typically, block storage is not shared.
+
+A fsGroup definition is shown below in the following pod definition fragment:
+
+
+kind: Pod
+...
+spec:
+  containers:
+  - name: ...
+  securityContext: 
+    fsGroup: 5555 
+  ...
+As with supplementalGroups, fsGroup must be defined globally to the pod, not per container.
+5555 will become the group ID for the volume’s group permissions and for all new files created in the volume.
+
+kind: Pod
+...
+spec:
+  containers:
+  - name: ...
+  securityContext: 
+    fsGroup: 5555 
+  ...
+As with supplementalGroups, fsGroup must be defined globally to the pod, not per container.
+5555 will become the group ID for the volume’s group permissions and for all new files created in the volume.
+
+
+
+As with supplementalGroups, all containers in the above pod (assuming the matching SCC or project allows the group 5555) will be members of the group 5555, and will have access to the block volume, regardless of the container’s user ID. If the pod matches the restricted SCC, whose fsGroup strategy is RunAsAny, then any fsGroup ID (including 5555) will be accepted. However, if the SCC has its fsGroup strategy set to MustRunAs, and 5555 is not in the allowable range of fsGroup IDs, then the pod will fail to run.
+
+fsGroups and Custom SCCs
+
+To remedy the situation in the previous example, a custom SCC can be created such that:
+
+a minimum and maximum group ID are defined,
+
+ID range checking is enforced, and
+
+the group ID of 5555 is allowed.
+
+It is better to create new SCCs versus modifying a predefined SCC, or changing the range of allowed IDs in the predefined projects.
+
+Consider the following fragment of a new SCC definition:
+
+
+# oc export scc new-scc
+...
+kind: SecurityContextConstraints
+...
+fsGroup:
+  type: MustRunAs 
+  ranges: 
+  - max: 6000
+    min: 5000 
+...
+MustRunAs triggers group ID range checking, whereas RunAsAny does not require range checking.
+The range of allowed group IDs is 5000 through, and including, 5999. Multiple ranges are supported. The allowed group ID range here is 5000 through 5999, with the default fsGroup being 5000.
+The minimum value (or the entire range) can be omitted from the SCC, and thus range checking and generating a default value will defer to the project’s openshift.io/sa.scc.supplemental-groups range. fsGroup and supplementalGroups use the same group field in the project; there is not a separate range for fsGroup.
+When the pod shown above runs against this new SCC (assuming, of course, the pod has access to the new SCC), it will start because the group 5555, supplied in the pod definition, is allowed by the custom SCC. Additionally, the pod will "take over" the block device, so when the block storage is viewed by a process outside of the pod, it will actually have 5555 as its group ID.
+
+Currently the list of volumes which support block ownership (block) management include:
+
+AWS Elastic Block Store
+
+OpenStack Cinder
+
+Ceph RBD
+
+GCE Persistent Disk
+
+iSCSI
+
+emptyDir
+
+gitRepo
+
+User IDs
+Read SCCs, Defaults, and Allowed Ranges before working with supplemental groups.
+
+It is generally preferable to use group IDs (supplemental or fsGroup) to gain access to persistent storage versus using user IDs.
+
+User IDs can be defined in the container image or in the pod definition. In the pod definition, a single user ID can be defined globally to all containers, or specific to individual containers (or both). A user ID is supplied as shown in the pod definition fragment below:
+
+
+spec:
+  containers:
+  - name: ...
+    securityContext:
+      runAsUser: 65534
+ID 65534 in the above is container-specific and matches the owner ID on the export. If the NFS export’s owner ID was 54321, then that number would be used in the pod definition. Specifying securityContext outside of the container definition makes the ID global to all containers in the pod.
+
+Similar to group IDs, user IDs may be validated according to policies set in the SCC and/or project. If the SCC’s runAsUser strategy is set to RunAsAny, then any user ID defined in the pod definition or in the image is allowed.
+
+This means even a UID of 0 (root) is allowed.
+
+If, instead, the runAsUser strategy is set to MustRunAsRange, then a supplied user ID will be validated against a range of allowed IDs. If the pod supplies no user ID, then the default ID is the minimum value of the range of allowable user IDs.
+
+Returning to the earlier NFS example, the container needs its UID set to 65534, which is shown in the pod fragment above. Assuming the default project and the restricted SCC, the pod’s requested user ID of 65534 will not be allowed, and therefore the pod will fail. The pod fails because:
+
+it requests 65534 as its user ID,
+
+all available SCCs use MustRunAsRange for their runAsUser strategy, so UID range checking is required, and
+
+65534 is not included in the SCC or project’s user ID range.
+
+To address this situation, the recommended path would be to create a new SCC with the appropriate user ID range. A new project could also be created with the appropriate user ID range defined. There are other, less-preferred options:
+
+The restricted SCC could be modified to include 65534 within its minimum and maximum user ID range. This is not recommended as you should avoid modifying the predefined SCCs if possible.
+
+The restricted SCC could be modified to use RunAsAny for the runAsUser value, thus eliminating ID range checking. This is strongly not recommended, as containers could run as root.
+
+The default project’s UID range could be changed to allow a user ID of 65534. This is not generally advisable because only a single range of user IDs can be specified.
+
+User IDs and Custom SCCs
+
+It is good practice to avoid modifying the predefined SCCs if possible. The preferred approach is to create a custom SCC that better fits an organization’s security needs, or create a new project that supports the desired user IDs.
+
+To remedy the situation in the previous example, a custom SCC can be created such that:
+
+a minimum and maximum user ID is defined,
+
+UID range checking is still enforced, and
+
+the UID of 65534 will be allowed.
+
+For example:
+
+
+$ oc export scc nfs-scc
+
+allowHostDirVolumePlugin: false 
+...
+kind: SecurityContextConstraints
+metadata:
+  ...
+  name: nfs-scc 
+priority: 9 
+requiredDropCapabilities: null
+runAsUser:
+  type: MustRunAsRange 
+  uidRangeMax: 65534 
+  uidRangeMin: 65534
+...
+The allow* bools are the same as for the restricted SCC.
+The name of this new SCC is nfs-scc.
+Numerically larger numbers have greater priority. Nil or omitted is the lowest priority. Higher priority SCCs sort before lower priority SCCs, and thus have a better chance of matching a new pod.
+The runAsUser strategy is set to MustRunAsRange, which means UID range checking is enforced.
+The UID range is 65534 through 65534 (a range of one value).
+Now, with runAsUser: 65534 shown in the previous pod definition fragment, the pod matches the new nfs-scc and is able to run with a UID of 65534.
+
+SELinux Options
+All predefined SCCs, except for the privileged SCC, set the seLinuxContext to MustRunAs. So the SCCs most likely to match a pod’s requirements will force the pod to use an SELinux policy. The SELinux policy used by the pod can be defined in the pod itself, in the image, in the SCC, or in the project (which provides the default).
+
+SELinux labels can be defined in a pod’s securityContext.seLinuxOptions section, and supports user, role, type, and level:
+
+Level and MCS label are used interchangeably in this topic.
+
+
+...
+ securityContext: 
+    seLinuxOptions:
+      level: "s0:c123,c456" 
+...
+level can be defined globally for the entire pod, or individually for each container.
+SELinux level label.
+Here are fragments from an SCC and from the default project:
+
+
+$ oc export scc scc-name
+...
+seLinuxContext:
+  type: MustRunAs 
+
+# oc export project default
+...
+metadata:
+  annotations:
+    openshift.io/sa.scc.mcs: s0:c1,c0 
+...
+MustRunAs causes volume relabeling.
+If the label is not provided in the pod or in the SCC, then the default comes from the project.
+All predefined SCCs, except for the privileged SCC, set the seLinuxContext to MustRunAs. This forces pods to use MCS labels, which can be defined in the pod definition, the image, or provided as a default.
+
+The SCC determines whether or not to require an SELinux label and can provide a default label. If the seLinuxContext strategy is set to MustRunAs and the pod (or image) does not define a label, OpenShift defaults to a label chosen from the SCC itself or from the project.
+
+If seLinuxContext is set to RunAsAny, then no default labels are provided, and the container determines the final label. In the case of Docker, the container will use a unique MCS label, which will not likely match the labeling on existing storage mounts. Volumes which support SELinux management will be relabeled so that they are accessible by the specified label and, depending on how exclusionary the label is, only that label.
+
+This means two things for unprivileged containers:
+
+The volume will be given a type which is accessible by unprivileged containers. This type is usually svirt_sandbox_file_t.
+
+If a level is specified, the volume will be labeled with the given MCS label.
+
+For a volume to be accessible by a pod, the pod must have both categories of the volume. So a pod with s0:c1,c2 will be able to access a volume with s0:c1,c2. A volume with s0 will be accessible by all pods.
+
+If pods fail authorization, or if the storage mount is failing due to permissions errors, then there is a possibility that SELinux enforcement is interfering. One way to check for this is to run:
+
+
+# ausearch -m avc --start recent
+This examines the log file for AVC (Access Vector Cache) errors.

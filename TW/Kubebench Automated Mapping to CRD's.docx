@@ -1,0 +1,4 @@
+Very easy! follow this procedure in Terminal to convert The results from a kube-bench security test to a custom resource defintion:
+
+kubectl starboard kube-bench
+kubectl get ciskubebenchreports -o yaml
