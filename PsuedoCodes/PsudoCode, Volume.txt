@@ -6,9 +6,7 @@ func volumeTypes(num){
 			
 			     "]	
 	Var[] choices = getinput("from array of all volumes, choose volumes") 
-//get inputs, either by text or by
+//get input for volume choices
 //list on volume choices
 	writetofile(choices, minVols)
-	fsgroupctrl()                                                   
-//call to set fs group controls
 }
