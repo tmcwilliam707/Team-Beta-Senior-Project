@@ -1,0 +1,117 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nirmata
+  labels:
+    name: nirmata
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nirmata
+  namespace: nirmata
+---
+# Cluster wide administrative role for nirmata-controller
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: nirmata:cluster-admin
+rules:
+  -
+    apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+  - nonResourceURLs: ["*"]
+    verbs: ["*"]
+---   
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata-cluster-admin-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: nirmata
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nirmata-controller
+  namespace: nirmata
+---   
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata-controller-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: nirmata-controller
+  namespace: nirmata
+
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "nirmata-kube-controller"
+  namespace: "nirmata"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "nirmata-kube-controller"
+      nirmata.io/container.type: "system"
+      app.kubernetes.io/name: "nirmata"
+      app.kubernetes.io/instance: "nirmata"
+  template:
+    metadata:
+      labels:
+        app: "nirmata-kube-controller"
+        nirmata.io/container.type: "system"
+        app.kubernetes.io/name: "nirmata"
+        app.kubernetes.io/instance: "nirmata"
+    spec:
+      containers:
+      - args:
+        - "-token"
+        - "$(TOKEN)"
+        - "-url"
+        - "$(URL)"
+        command:
+        - "/nirmata-kube-controller"
+        env:
+        - name: "TOKEN"
+          value: "272b4d6e-5a9c-4a3a-a937-09e267af1b0b"
+        - name: "URL"
+          value: "wss://www.nirmata.io/tunnels"
+        image: "index.docker.io/nirmata/nirmata-kube-controller:latest"
+        imagePullPolicy: "IfNotPresent"
+        name: "nirmata-kube-controller"
+        resources:
+          limits:
+            memory: "250Mi"
+          requests:
+            memory: "200Mi"
+            cpu: "250m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+      hostNetwork: false
+      imagePullSecrets:
+      - name: "nirmata-controller-registry-secret"
+      serviceAccount: "nirmata"
+      tolerations:
+      - effect: "NoSchedule"
+        key: "node-role.kubernetes.io/master"
+        operator: "Exists"
